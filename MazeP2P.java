@@ -42,9 +42,8 @@ public class MazeP2P {
 		
 	}
 	
-	public void GetinitDetails(){
-		PlayerInfo Playerobj=new PlayerInfo();
-		MazeBean Beanobj=new MazeBean();
+	public void GetinitDetails(PlayerInfo Playerobj,MazeBean Beanobj){
+		
 		System.out.println("Welcome! Enter Player Name:");
 		BufferedReader PlayerName = new BufferedReader(new InputStreamReader(System.in));
 		try{
@@ -77,9 +76,12 @@ public class MazeP2P {
 
 	public static void main(String[] args) throws UnknownHostException, RemoteException, NotBoundException, AlreadyBoundException {
 		MazeP2P P2PObj=new MazeP2P();
-		P2PObj.GetinitDetails();
+		
+		PlayerInfo Playerobj=new PlayerInfo();
+		MazeBean Beanobj=new MazeBean();
+		P2PObj.GetinitDetails(Playerobj,Beanobj);
 		P2PObj.InitializeMaze();
-		MazeGUI MazeGUIobj=new MazeGUI();
+		MazeGUI MazeGUIobj=new MazeGUI(Playerobj,Beanobj);
 	}
 
 }

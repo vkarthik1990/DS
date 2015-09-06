@@ -14,8 +14,8 @@ import javax.swing.JFrame;
 
 
 public class MazeGUI {
-	MazeBean Beanobj=new MazeBean();
-	PlayerInfo PlayerObj=new PlayerInfo();
+	MazeBean BeanObj;
+	PlayerInfo PlayerObj;
 	Graphics g;
 	
 	Random randomize = new Random();
@@ -25,10 +25,10 @@ public class MazeGUI {
 	
 	
 
-	public  MazeGUI(){
-		Beanobj=new MazeBean();
-		PlayerObj=new PlayerInfo();
-		PlayerObj.setPlayerID(GeneratePlayerID());
+	public  MazeGUI(PlayerInfo Playerobj,MazeBean Beanobj){
+		BeanObj=Beanobj;
+		PlayerObj=Playerobj;
+		Playerobj.setPlayerID(GeneratePlayerID());
 		N=Beanobj.getGridSize();
 		M=Beanobj.getTreasure();
 		//JFrame MazeFrame=new JFrame("MazeFrame");
@@ -90,7 +90,7 @@ public class MazeGUI {
 		   int key = (int) iterator.next();
 		   String value = mazeGrid.get(key).toString();			  
 		   //System.out.println(key + " " + value);
-		   if(key%(N)==0)
+		   if(key%(BeanObj.getGridSize())==0)
 		   {
 			   System.out.println("");
 		   }
@@ -119,8 +119,8 @@ public class MazeGUI {
 	public ArrayList getRowcolumns(int position){
 		ArrayList PositionCoordinates=new ArrayList();
 		
-		for(int i=0;i<N;i++){
-			for(int j=0;j<N;j++){
+		for(int i=0;i<BeanObj.getGridSize();i++){
+			for(int j=0;j<BeanObj.getGridSize();j++){
 				if(coordinates[i][j]==position){
 					PositionCoordinates.add(i);
 					PositionCoordinates.add(j);
