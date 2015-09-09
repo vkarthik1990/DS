@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 
 public class MazeP2P {
@@ -44,39 +45,53 @@ public class MazeP2P {
 	
 	public void GetinitDetails(PlayerInfo Playerobj,MazeBean Beanobj){
 		
+		
+		//Get the Player Name from the User....
 		System.out.println("Welcome! Enter Player Name:");
-		BufferedReader PlayerName = new BufferedReader(new InputStreamReader(System.in));
+		Scanner ScannerObj = new Scanner(System.in);
+		String PlayerName = ScannerObj.next();
 		try{
-			if(PlayerName.readLine()!=null)
-			{
-				Playerobj.setPlayerName(PlayerName.readLine());
+			while(PlayerName=="1"){
+				System.out.println("Please Enter a Valid Name....  ");
+				PlayerName = ScannerObj.next();
 			}
-			
+			Playerobj.setPlayerName(PlayerName);
 		}catch(Exception e){
 			System.out.println("Exception: "+e);
 		}
 		
+
+		//Get the GridSize from the User....
 		System.out.println("Enter your MazeGrid Size: ");
-		BufferedReader GridSize = new BufferedReader(new InputStreamReader(System.in));
+		int GridSize = Integer.parseInt(ScannerObj.next());
 		try{
-			Beanobj.setGridSize((Integer.parseInt(GridSize.readLine())));
+			while(GridSize==0){
+				System.out.println("Please Enter a Valid GridSize....  ");
+				GridSize = Integer.parseInt(ScannerObj.next());
+			}
+			Beanobj.setGridSize(GridSize);
 		}catch(Exception e){
 			System.out.println("Exception: "+e);
 		}
 		
+		//Get the Treasure Count from the User....
 		System.out.println("Enter your No. of Treasures: ");
-		BufferedReader NoTreasures = new BufferedReader(new InputStreamReader(System.in));
+		int NoTreasures = Integer.parseInt(ScannerObj.next());
 		try{
-			Beanobj.setTreasure((Integer.parseInt(NoTreasures.readLine())));
+			while(NoTreasures==0){
+				System.out.println("Please Enter a Valid No of Treasures....  ");
+				NoTreasures = Integer.parseInt(ScannerObj.next());
+			}
+			Beanobj.setTreasure(NoTreasures);
 		}catch(Exception e){
 			System.out.println("Exception: "+e);
 		}
+
 		
 	}
 
 	public static void main(String[] args) throws UnknownHostException, RemoteException, NotBoundException, AlreadyBoundException {
 		MazeP2P P2PObj=new MazeP2P();
-		
 		PlayerInfo Playerobj=new PlayerInfo();
 		MazeBean Beanobj=new MazeBean();
 		P2PObj.GetinitDetails(Playerobj,Beanobj);

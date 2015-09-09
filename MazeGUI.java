@@ -1,5 +1,10 @@
+import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.List;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -11,21 +16,33 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
-public class MazeGUI {
+public class MazeGUI extends Frame{
 	MazeBean BeanObj;
 	PlayerInfo PlayerObj;
 	Graphics g;
+	JFrame Jframeobj=new JFrame();
 	
 	Random randomize = new Random();
 	public int N,M;
 	public int[][] coordinates;
 	public Map<Integer,String> MazeGrid;
-	
+	CustomKeyListener ckObj=new CustomKeyListener();
 	
 
-	public  MazeGUI(PlayerInfo Playerobj,MazeBean Beanobj){
+	public  MazeGUI(PlayerInfo Playerobj,MazeBean Beanobj) {
+
+		Jframeobj.setTitle("Maze Game");
+		Jframeobj.setSize(500, 500);
+		Jframeobj.setVisible(true);
+		Jframeobj.setFocusable(true);
+		Jframeobj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		
 		BeanObj=Beanobj;
 		PlayerObj=Playerobj;
 		Playerobj.setPlayerID(GeneratePlayerID());
@@ -33,6 +50,43 @@ public class MazeGUI {
 		M=Beanobj.getTreasure();
 		//JFrame MazeFrame=new JFrame("MazeFrame");
 		createMazebox(N,M);
+		Jframeobj.addKeyListener(ckObj); 
+
+	}
+	
+	public class ActionListener extends KeyAdapter{
+			
+	}
+	
+	public void paint(Graphics g){
+		super.paint(g);
+		
+	}
+	public void DisplayMazeGridinBoard(Map<Integer, String> mazeGrid,JFrame Jframeobj) {
+			JPanel JPanelObj=new JPanel(new GridLayout(N,N));
+			JPanelObj.setFocusable(true);
+			JPanelObj.setSize(10, 10);
+			
+		Iterator iterator = mazeGrid.keySet().iterator();
+		  
+		while (iterator.hasNext()) {
+		   int key = (int) iterator.next();
+		   String value = mazeGrid.get(key).toString();			  
+		   //System.out.println(key + " " + value);
+		   if(key%(BeanObj.getGridSize())==0)
+		   {
+			   JPanelObj.add(new JLabel(" "));
+			   //System.out.println("");
+		   }
+		 
+		   JPanelObj.add(new JLabel(value));
+		   		//System.out.print(value+"\t");
+		}
+		repaint();
+		doLayout();
+		Jframeobj.add(JPanelObj);
+		repaint();
+
 	}
 	
 	public void createMazebox(int N,int M){
@@ -71,8 +125,9 @@ public class MazeGUI {
 			++counter;
 		}
 		DisplayMazeGrid(MazeGrid);
-		PlayerMoves(PlayerObj,"w");		
+		//PlayerMoves(PlayerObj,"w",N);		
 		DisplayMazeGrid(MazeGrid);
+		DisplayMazeGridinBoard(MazeGrid,Jframeobj);
 	}
 	
 	
@@ -99,22 +154,75 @@ public class MazeGUI {
 
 	}
 
-	public void PlayerMoves(PlayerInfo PlayerObj,String direction) {
+	/*Player Direction controls are placed here*/
+	public void PlayerMoves(PlayerInfo PlayerObj,String direction,int GridSize) {
 		ArrayList playercoordinates=getRowcolumns(PlayerObj.getPlayerPosition());
 		int currentRow=(int) playercoordinates.get(0);
 		int currentColumn=(int) playercoordinates.get(1);
 		int newRow=currentRow;
 		int newColumn=currentColumn;
+
 			
-		if(direction.equalsIgnoreCase("w"))
+		if(direction.equalsIgnoreCase("w")) //Top
 			{
 				newRow=currentRow-1;
-				MazeGrid.put(coordinates[currentRow][newColumn], "0");
+				if(newRow!=-1 &&  MazeGrid.get(coordinates[newRow][newColumn]).equals("0"))
+				{
+				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
+				}
+				else {
+					newRow=currentRow;
+					System.out.println("Move Unsuccessfull!  Player ["+PlayerObj.getPlayerName()+ "]   Cannot move Up");
+				}
 			}
+		else if(direction.equalsIgnoreCase("a")) //Left
+		{
+			newColumn=currentColumn-1;
+			if(newColumn!=-1 &&  MazeGrid.get(coordinates[newRow][newColumn]).equals("0"))
+			{
+			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
+			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
+			}
+			else {
+				newColumn=currentColumn;
+				System.out.println("Move Unsuccessfull!    Player ["+PlayerObj.getPlayerName()+ "]    Cannot move Left");
+			}
+		}
+		else if(direction.equalsIgnoreCase("s")) //down
+		{
+			newRow=currentRow+1;
+			if(newRow<=GridSize &&  MazeGrid.get(coordinates[newRow][newColumn]).equals("0"))
+			{
+			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
+			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
+			}
+			else {
+				newRow=currentRow;
+				System.out.println("Move Unsuccessfull!    Player ["+PlayerObj.getPlayerName()+ "]    Cannot move Down");
+			}
+		}
+		else if(direction.equalsIgnoreCase("d"))//right
+		{
+			newColumn=currentColumn+1;
+			if(newColumn<=GridSize && MazeGrid.get(coordinates[newRow][newColumn]).equals("0"))
+			{
+			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
+			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
+			DisplayMazeGrid(MazeGrid);
+			DisplayMazeGridinBoard(MazeGrid, Jframeobj);
+			}
+			else {
+				newColumn=currentColumn;
+				System.out.println("Move Unsuccessfull!   ["+PlayerObj.getPlayerName()+ "]     Cannot move Right");
+			}
+		}
 			
 		
-		}
+		
+	
+		
+}
 	
 	public ArrayList getRowcolumns(int position){
 		ArrayList PositionCoordinates=new ArrayList();
@@ -131,11 +239,52 @@ public class MazeGUI {
 		return PositionCoordinates;
 		
 	}
-	
+	class CustomKeyListener extends KeyAdapter{
+	public synchronized void keyReleased(KeyEvent e) {  
+            int code = e.getKeyCode();  
+			switch(code)
+			{
+				case KeyEvent.VK_UP:
+				case KeyEvent.VK_W:
+					PlayerMoves(PlayerObj,"w",N);
+					System.out.println("Up");
+				break;
+				case KeyEvent.VK_DOWN:
+				case KeyEvent.VK_S:
+					System.out.println("Down");
+					PlayerMoves(PlayerObj,"s",N);
+				break;
+				case KeyEvent.VK_LEFT:
+				case KeyEvent.VK_A:
+					PlayerMoves(PlayerObj,"a",N);
+					System.out.println("Left");
+				break;
+				case KeyEvent.VK_RIGHT:
+				case KeyEvent.VK_D:
+					PlayerMoves(PlayerObj,"d",N);
+					System.out.println("Right");
+				break;
+				case KeyEvent.VK_N:
+					System.out.println("No Move");
+				break;
+				default:
+					System.out.println("Invalid Move");				
+			}
+			
+	}
+	}
+
+          
+
 	public static void main(String[] args){
 		
 		
 	}
 
 
+
+
+
 }
+
+
