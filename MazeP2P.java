@@ -13,6 +13,14 @@ import java.util.Scanner;
 
 public class MazeP2P {
 	MazeInterface MazeStub;
+	public MazeInterface getMazeStub() {
+		return MazeStub;
+	}
+
+	public void setMazeStub(MazeInterface mazeStub) {
+		MazeStub = mazeStub;
+	}
+
 	MazeController MazeObj=new MazeController();
 	
 	public void InitializeMaze() throws UnknownHostException, NotBoundException, RemoteException, AlreadyBoundException
@@ -92,6 +100,7 @@ public class MazeP2P {
 
 	public static void main(String[] args) throws UnknownHostException, RemoteException, NotBoundException, AlreadyBoundException {
 		MazeP2P P2PObj=new MazeP2P();
+		
 		PlayerInfo Playerobj=new PlayerInfo();
 		MazeBean Beanobj=new MazeBean();
 		P2PObj.GetinitDetails(Playerobj,Beanobj);

@@ -2,6 +2,7 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.List;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -25,6 +26,7 @@ public class MazeGUI extends Frame{
 	PlayerInfo PlayerObj;
 	Graphics g;
 	JFrame Jframeobj=new JFrame();
+	JPanel JPanelObj=new JPanel(new GridLayout(5,5));
 	
 	Random randomize = new Random();
 	public int N,M;
@@ -63,10 +65,10 @@ public class MazeGUI extends Frame{
 		
 	}
 	public void DisplayMazeGridinBoard(Map<Integer, String> mazeGrid,JFrame Jframeobj) {
-			JPanel JPanelObj=new JPanel(new GridLayout(N,N));
+			
 			JPanelObj.setFocusable(true);
 			JPanelObj.setSize(10, 10);
-			
+			JPanelObj.removeAll();
 		Iterator iterator = mazeGrid.keySet().iterator();
 		  
 		while (iterator.hasNext()) {
@@ -82,10 +84,10 @@ public class MazeGUI extends Frame{
 		   JPanelObj.add(new JLabel(value));
 		   		//System.out.print(value+"\t");
 		}
-		repaint();
-		doLayout();
+		
+		JPanelObj.repaint();
 		Jframeobj.add(JPanelObj);
-		repaint();
+		//JPanelObj.repaint();
 
 	}
 	
@@ -161,54 +163,73 @@ public class MazeGUI extends Frame{
 		int currentColumn=(int) playercoordinates.get(1);
 		int newRow=currentRow;
 		int newColumn=currentColumn;
+		int CollectedTreassure=PlayerObj.getCollectedTreasure();
 
 			
-		if(direction.equalsIgnoreCase("w")) //Top
+		if(direction.equalsIgnoreCase("w") && (currentRow-1) !=-1) //Top
 			{
 				newRow=currentRow-1;
-				if(newRow!=-1 &&  MazeGrid.get(coordinates[newRow][newColumn]).equals("0"))
+				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("0")|| MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
 				{
+					if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) 
+						{
+						PlayerObj.setCollectedTreasure(CollectedTreassure+1);
+						}
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
+				PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
+				DisplayMazeGrid(MazeGrid);
+				DisplayMazeGridinBoard(MazeGrid, Jframeobj);
+				
 				}
 				else {
 					newRow=currentRow;
 					System.out.println("Move Unsuccessfull!  Player ["+PlayerObj.getPlayerName()+ "]   Cannot move Up");
 				}
 			}
-		else if(direction.equalsIgnoreCase("a")) //Left
+		else if(direction.equalsIgnoreCase("a") && (currentColumn-1)!=-1) //Left
 		{
 			newColumn=currentColumn-1;
-			if(newColumn!=-1 &&  MazeGrid.get(coordinates[newRow][newColumn]).equals("0"))
+			if(MazeGrid.get(coordinates[newRow][newColumn]).equals("0") || MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
 			{
+				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) PlayerObj.setCollectedTreasure(CollectedTreassure+1);
 			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
+			PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
+			DisplayMazeGrid(MazeGrid);
+			DisplayMazeGridinBoard(MazeGrid, Jframeobj);
 			}
 			else {
 				newColumn=currentColumn;
 				System.out.println("Move Unsuccessfull!    Player ["+PlayerObj.getPlayerName()+ "]    Cannot move Left");
 			}
 		}
-		else if(direction.equalsIgnoreCase("s")) //down
+		else if(direction.equalsIgnoreCase("s") && currentRow+1<GridSize) //down
 		{
 			newRow=currentRow+1;
-			if(newRow<=GridSize &&  MazeGrid.get(coordinates[newRow][newColumn]).equals("0"))
+			if(MazeGrid.get(coordinates[newRow][newColumn]).equals("0")|| MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
 			{
+				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) PlayerObj.setCollectedTreasure(CollectedTreassure+1);
 			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
+			PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
+			DisplayMazeGrid(MazeGrid);
+			DisplayMazeGridinBoard(MazeGrid, Jframeobj);
 			}
 			else {
 				newRow=currentRow;
 				System.out.println("Move Unsuccessfull!    Player ["+PlayerObj.getPlayerName()+ "]    Cannot move Down");
 			}
 		}
-		else if(direction.equalsIgnoreCase("d"))//right
+		else if(direction.equalsIgnoreCase("d") && (currentColumn+1)<GridSize)//right
 		{
 			newColumn=currentColumn+1;
-			if(newColumn<=GridSize && MazeGrid.get(coordinates[newRow][newColumn]).equals("0"))
+			if(MazeGrid.get(coordinates[newRow][newColumn]).equals("0") || MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
 			{
+				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) PlayerObj.setCollectedTreasure(CollectedTreassure+1);
 			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
+			PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
 			DisplayMazeGrid(MazeGrid);
 			DisplayMazeGridinBoard(MazeGrid, Jframeobj);
 			}
@@ -217,6 +238,7 @@ public class MazeGUI extends Frame{
 				System.out.println("Move Unsuccessfull!   ["+PlayerObj.getPlayerName()+ "]     Cannot move Right");
 			}
 		}
+		else{System.out.println("Move Unsuccessful !   ["+PlayerObj.getPlayerName()+ "]     is at the GRID EDGES");}
 			
 		
 		
@@ -240,6 +262,9 @@ public class MazeGUI extends Frame{
 		
 	}
 	class CustomKeyListener extends KeyAdapter{
+		public void actionPerformed(ActionEvent e){
+			repaint();
+		}
 	public synchronized void keyReleased(KeyEvent e) {  
             int code = e.getKeyCode();  
 			switch(code)

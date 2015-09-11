@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class MazeBean implements Serializable {
 	
-	int GridSize,Treasure;
+	int GridSize,Treasure,TreasureCount;
 	ArrayList PlayerList=new ArrayList();
 	
 	public int getGridSize() {
@@ -16,6 +16,14 @@ public class MazeBean implements Serializable {
 
 	public ArrayList getPlayerList() {
 		return this.PlayerList;
+	}
+
+	public int getTreasureCount() {
+		return TreasureCount;
+	}
+
+	public void setTreasureCount(int treasureCount) {
+		TreasureCount = treasureCount;
 	}
 
 	public void setPlayerList(int playerID) {
@@ -34,5 +42,9 @@ public class MazeBean implements Serializable {
 		this.Treasure = treasure;
 	}
 	    	
+	
+	
+	
+	
 	
 }
