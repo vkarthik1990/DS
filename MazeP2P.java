@@ -51,15 +51,17 @@ public class MazeP2P {
 		
 	}
 	
-	public void GetinitDetails(PlayerInfo Playerobj,MazeBean Beanobj){
+	@SuppressWarnings("unused")
+	public void GetinitDetails(PlayerInfo Playerobj,MazeBean Beanobj) throws NumberFormatException{
 		
 		
 		//Get the Player Name from the User....
 		System.out.println("Welcome! Enter Player Name:");
 		Scanner ScannerObj = new Scanner(System.in);
+		Validate val = new Validate();
 		String PlayerName = ScannerObj.next();
 		try{
-			while(PlayerName=="1"){
+			while(!val.isvalidName(PlayerName)){
 				System.out.println("Please Enter a Valid Name....  ");
 				PlayerName = ScannerObj.next();
 			}
@@ -70,31 +72,32 @@ public class MazeP2P {
 		
 
 		//Get the GridSize from the User....
+		int GridSize=0;
 		System.out.println("Enter your MazeGrid Size: ");
-		int GridSize = Integer.parseInt(ScannerObj.next());
 		try{
-			while(GridSize==0){
+			String GridSizeString = ScannerObj.next();
+			while(!val.isvalidGridSize(GridSizeString)){
 				System.out.println("Please Enter a Valid GridSize....  ");
-				GridSize = Integer.parseInt(ScannerObj.next());
+				GridSizeString = ScannerObj.next();
 			}
+			GridSize = Integer.parseInt(GridSizeString);
 			Beanobj.setGridSize(GridSize);
-		}catch(Exception e){
+		} catch(Exception e){
 			System.out.println("Exception: "+e);
 		}
 		
-		//Get the Treasure Count from the User....
-		System.out.println("Enter your No. of Treasures: ");
-		int NoTreasures = Integer.parseInt(ScannerObj.next());
+		System.out.println("Enter the number of Treasures: ");
 		try{
-			while(NoTreasures==0){
-				System.out.println("Please Enter a Valid No of Treasures....  ");
-				NoTreasures = Integer.parseInt(ScannerObj.next());
+			String NoTreasuresString = ScannerObj.next();
+			while(!val.isvalidTreasure(GridSize, NoTreasuresString)){
+				System.out.println("Please Enter a Valid number of Treasures....  ");
+				NoTreasuresString = ScannerObj.next();
 			}
+			int NoTreasures = Integer.parseInt(NoTreasuresString);
 			Beanobj.setTreasure(NoTreasures);
-		}catch(Exception e){
+		} catch(Exception e){
 			System.out.println("Exception: "+e);
 		}
-
 		
 	}
 
@@ -106,6 +109,8 @@ public class MazeP2P {
 		P2PObj.GetinitDetails(Playerobj,Beanobj);
 		P2PObj.InitializeMaze();
 		MazeGUI MazeGUIobj=new MazeGUI(Playerobj,Beanobj);
+		
+	
 	}
 
 }

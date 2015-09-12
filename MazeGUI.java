@@ -107,7 +107,6 @@ public class MazeGUI extends Frame{
 			System.out.println();
 		}
 		
-	
 		//Intialize the Random Tressure Positions
 		while(counter < M){
 			  randRow = randomize.nextInt(N);
@@ -120,11 +119,17 @@ public class MazeGUI extends Frame{
 		
 		//Intialize the Player Positions
 		  randRow = randomize.nextInt(N);
-		  randColumn = randomize.nextInt(N);			
+		  randColumn = randomize.nextInt(N);
+		  
 		if(MazeGrid.get(coordinates[randRow][randColumn]) != "X"){
 			MazeGrid.put(coordinates[randRow][randColumn], PlayerObj.getPlayerName());
 			PlayerObj.setPlayerPosition(coordinates[randRow][randColumn]);
 			++counter;
+		}
+		else {
+			MazeGrid.put(coordinates[randRow][randColumn], PlayerObj.getPlayerName());
+			PlayerObj.collectedTreasure++;
+			PlayerObj.setPlayerPosition(coordinates[randRow][randColumn]);
 		}
 		DisplayMazeGrid(MazeGrid);
 		//PlayerMoves(PlayerObj,"w",N);		
@@ -159,6 +164,7 @@ public class MazeGUI extends Frame{
 	/*Player Direction controls are placed here*/
 	public void PlayerMoves(PlayerInfo PlayerObj,String direction,int GridSize) {
 		ArrayList playercoordinates=getRowcolumns(PlayerObj.getPlayerPosition());
+		Validate val=new Validate();
 		int currentRow=(int) playercoordinates.get(0);
 		int currentColumn=(int) playercoordinates.get(1);
 		int newRow=currentRow;
@@ -174,10 +180,12 @@ public class MazeGUI extends Frame{
 					if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) 
 						{
 						PlayerObj.setCollectedTreasure(CollectedTreassure+1);
+						BeanObj.setTreasure(--M);
 						}
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
 				PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
+				System.out.println("Collected treasure "+ PlayerObj.collectedTreasure);
 				DisplayMazeGrid(MazeGrid);
 				DisplayMazeGridinBoard(MazeGrid, Jframeobj);
 				
@@ -192,10 +200,14 @@ public class MazeGUI extends Frame{
 			newColumn=currentColumn-1;
 			if(MazeGrid.get(coordinates[newRow][newColumn]).equals("0") || MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
 			{
-				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) PlayerObj.setCollectedTreasure(CollectedTreassure+1);
+				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")){
+					PlayerObj.setCollectedTreasure(CollectedTreassure+1);
+					BeanObj.setTreasure(--M);
+				}
 			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
 			PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
+			System.out.println("Collected treasure "+ PlayerObj.collectedTreasure);
 			DisplayMazeGrid(MazeGrid);
 			DisplayMazeGridinBoard(MazeGrid, Jframeobj);
 			}
@@ -209,10 +221,14 @@ public class MazeGUI extends Frame{
 			newRow=currentRow+1;
 			if(MazeGrid.get(coordinates[newRow][newColumn]).equals("0")|| MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
 			{
-				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) PlayerObj.setCollectedTreasure(CollectedTreassure+1);
+				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")){
+					PlayerObj.setCollectedTreasure(CollectedTreassure+1);
+					BeanObj.setTreasure(--M);
+				}
 			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
 			PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
+			System.out.println("Collected treasure "+ PlayerObj.collectedTreasure);
 			DisplayMazeGrid(MazeGrid);
 			DisplayMazeGridinBoard(MazeGrid, Jframeobj);
 			}
@@ -226,10 +242,15 @@ public class MazeGUI extends Frame{
 			newColumn=currentColumn+1;
 			if(MazeGrid.get(coordinates[newRow][newColumn]).equals("0") || MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
 			{
-				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) PlayerObj.setCollectedTreasure(CollectedTreassure+1);
+				if(MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) {
+					PlayerObj.setCollectedTreasure(CollectedTreassure+1);
+					BeanObj.setTreasure(--M);
+				}
 			MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 			MazeGrid.put(coordinates[newRow][newColumn], PlayerObj.getPlayerName());
 			PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
+			System.out.println("Collected treasure "+ PlayerObj.collectedTreasure);
+			
 			DisplayMazeGrid(MazeGrid);
 			DisplayMazeGridinBoard(MazeGrid, Jframeobj);
 			}
@@ -239,9 +260,8 @@ public class MazeGUI extends Frame{
 			}
 		}
 		else{System.out.println("Move Unsuccessful !   ["+PlayerObj.getPlayerName()+ "]     is at the GRID EDGES");}
-			
 		
-		
+		val.isTreasureOver(M);
 	
 		
 }
