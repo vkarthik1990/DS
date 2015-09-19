@@ -1,12 +1,15 @@
+import java.io.Serializable;
 
-public class PlayerInfo {
+
+public class PlayerInfo implements Serializable{
 	  int PlayerID;
 	  String PlayerName;
 	  int PlayerPosition;
 	  int collectedTreasure;
 	  boolean Primary;
 	  boolean Secondary;
-	  
+
+
 	public boolean isSecondary() {
 		return Secondary;
 	}

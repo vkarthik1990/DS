@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -12,7 +14,14 @@ import java.util.Scanner;
 
 
 public class MazeP2P {
-	MazeInterface MazeStub;
+	public static MazeBean Beanobj;
+	public static MazeInterface MazeStub;
+	public PlayerInfo Playerobj;
+	public static MazeP2P P2PObj;
+	public static MazeGUI MazeGUIobj;
+	public static MazeP2PInterface PeerStub;
+	public static Validate Val;
+	
 	public MazeInterface getMazeStub() {
 		return MazeStub;
 	}
@@ -23,45 +32,89 @@ public class MazeP2P {
 
 	MazeController MazeObj=new MazeController();
 	
-	public void InitializeMaze() throws UnknownHostException, NotBoundException, RemoteException, AlreadyBoundException
+	public void InitializeMaze(PlayerInfo Playerobj) throws UnknownHostException, NotBoundException, RemoteException, AlreadyBoundException
 	{
-		int port=1099;
+		//PlayerInfo Playerobj=new PlayerInfo();
+		this.getPlayerName(Playerobj);
+		int port=2015;
 		String HostIP="";
-		Registry MazeRegistry;
+		Registry MazeRegistry,P2PRegistry;
 		try{
 			MazeRegistry =LocateRegistry.getRegistry(HostIP,port);
 			MazeStub=(MazeInterface) MazeRegistry.lookup("MazeP2P");
-		}catch(RemoteException e)
-		{
+			
+			//For second client onwards
 			try{
-				MazeStub = (MazeInterface) UnicastRemoteObject.exportObject(MazeObj, 0);
+				System.setProperty("java.rmi.server.hostname", "");
+				while(!CheckPortAvailability(port)) port++;
+				
+				MazeP2PImpl PeerUpdate=new MazeP2PImpl();
+				PeerStub = (MazeP2PInterface) UnicastRemoteObject.exportObject(PeerUpdate, 0);	
+				//Creating a Peer to peer rmi
+				P2PRegistry=LocateRegistry.createRegistry(port);
+				P2PRegistry.bind("Peer2peer", PeerStub);
+			}catch (AlreadyBoundException ex) {
+				System.out.println("[Exception]: AlreadyBoundException");
+			} catch(RemoteException ex) {
+				System.out.println("[Exception]: RemoteException");
+			}
+		}catch(RemoteException e)
+		{	
+			try{
+				MazeStub = (MazeInterface) UnicastRemoteObject.exportObject(MazeObj, 0);				
 				MazeRegistry=LocateRegistry.createRegistry(port);
 				MazeRegistry.bind("MazeP2P", MazeStub);
 			}catch (AlreadyBoundException ex) {
-				System.out.println("AlreadyBoundException");
+				System.out.println("[Exception]: AlreadyBoundException");
 			} catch(RemoteException ex) {
-				System.out.println("RemoteException");
+				System.out.println("[Exception]: RemoteException");
 			}
 
+		}catch(NotBoundException ex){
+				System.out.println("[Exception]: NotBoundException");
 		}
-		MazeRegistry =LocateRegistry.getRegistry(HostIP,port);
-		MazeStub=(MazeInterface) MazeRegistry.lookup("MazeP2P");
-		MazeStub.sayHello();
+		
+		
+		
+		try {
+
+			Playerobj=MazeStub.joinGame(Playerobj);
+			if(!("").equals(Playerobj.getPlayerName())){
+				
+				MazeP2P.Beanobj=MazeStub.getMazeBean(Playerobj);
+				MazeP2P.Beanobj.DisplayMazeGrid(MazeP2P.Beanobj.getMazeGrid());
+				
+				while(!(MazeP2P.Beanobj.getGameStartTime()<System.currentTimeMillis())){
+					//20 Seconds wait till game start...
+				}
+				System.out.println("20 SECONDS OVER GAMESTARTS !");
+				
+				MazeP2P.Beanobj=MazeStub.getMazeBean(Playerobj);
+				
+				MazeP2P.Beanobj.DisplayMazeGrid(MazeP2P.Beanobj.getMazeGrid());
+				
+				MazeP2P.MazeGUIobj=new MazeGUI(Playerobj);
+			}
+			
+			
+			
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		
 	}
 	
-	@SuppressWarnings("unused")
-	public void GetinitDetails(PlayerInfo Playerobj,MazeBean Beanobj) throws NumberFormatException{
-		
+	public void getPlayerName(PlayerInfo Playerobj){
+		Beanobj=new MazeBean();
 		
 		//Get the Player Name from the User....
 		System.out.println("Welcome! Enter Player Name:");
 		Scanner ScannerObj = new Scanner(System.in);
-		Validate val = new Validate();
 		String PlayerName = ScannerObj.next();
 		try{
-			while(!val.isvalidName(PlayerName)){
+			while(!MazeP2P.Val.isvalidName(PlayerName)){
 				System.out.println("Please Enter a Valid Name....  ");
 				PlayerName = ScannerObj.next();
 			}
@@ -69,48 +122,31 @@ public class MazeP2P {
 		}catch(Exception e){
 			System.out.println("Exception: "+e);
 		}
-		
-
-		//Get the GridSize from the User....
-		int GridSize=0;
-		System.out.println("Enter your MazeGrid Size: ");
-		try{
-			String GridSizeString = ScannerObj.next();
-			while(!val.isvalidGridSize(GridSizeString)){
-				System.out.println("Please Enter a Valid GridSize....  ");
-				GridSizeString = ScannerObj.next();
+	}
+		public boolean CheckPortAvailability(int port){
+			try {  
+				ServerSocket socketobj = new ServerSocket(port);  
+				socketobj.close();  
+				socketobj = null;  
+				return true;  
+			} catch (IOException e) 
+			{  
+				return false; 
 			}
-			GridSize = Integer.parseInt(GridSizeString);
-			Beanobj.setGridSize(GridSize);
-		} catch(Exception e){
-			System.out.println("Exception: "+e);
-		}
-		
-		System.out.println("Enter the number of Treasures: ");
-		try{
-			String NoTreasuresString = ScannerObj.next();
-			while(!val.isvalidTreasure(GridSize, NoTreasuresString)){
-				System.out.println("Please Enter a Valid number of Treasures....  ");
-				NoTreasuresString = ScannerObj.next();
-			}
-			int NoTreasures = Integer.parseInt(NoTreasuresString);
-			Beanobj.setTreasure(NoTreasures);
-		} catch(Exception e){
-			System.out.println("Exception: "+e);
-		}
 		
 	}
+		
+		
+		
 
 	public static void main(String[] args) throws UnknownHostException, RemoteException, NotBoundException, AlreadyBoundException {
-		MazeP2P P2PObj=new MazeP2P();
+		P2PObj=new MazeP2P();
 		
 		PlayerInfo Playerobj=new PlayerInfo();
-		MazeBean Beanobj=new MazeBean();
-		P2PObj.GetinitDetails(Playerobj,Beanobj);
-		P2PObj.InitializeMaze();
-		MazeGUI MazeGUIobj=new MazeGUI(Playerobj,Beanobj);
+		Val =new Validate();
 		
-	
+		P2PObj.InitializeMaze(Playerobj);
+		
 	}
 
 }

@@ -6,7 +6,10 @@ public interface MazeInterface extends Remote{
 	
 	public PlayerInfo joinGame(PlayerInfo playerInfo) throws RemoteException;
 	
-	public boolean move(PlayerInfo playerInfo, String direction) throws RemoteException;
+	public MazeBean move(PlayerInfo playerInfo, String direction,int GridSize) throws RemoteException;
+	
+	public MazeBean getMazeBean(PlayerInfo playerInfo) throws RemoteException;
+	
 	
 	
 }
