@@ -8,7 +8,42 @@ public class PlayerInfo implements Serializable{
 	  int collectedTreasure;
 	  boolean Primary;
 	  boolean Secondary;
+	  boolean Active,winner;
+	  private String responseFromServer; 
+	  
+	  public String getResponseFromServer() {
+		return responseFromServer;
+	}
 
+	public void setResponseFromServer(String responseFromServer) {
+		this.responseFromServer = responseFromServer;
+	}
+
+	public boolean isWinner() {
+		return winner;
+	}
+
+	public void setWinner(boolean winner) {
+		this.winner = winner;
+	}
+	int PlayerPort;
+
+
+	public int getPlayerPort() {
+		return PlayerPort;
+	}
+
+	public void setPlayerPort(int playerPort) {
+		PlayerPort = playerPort;
+	}
+
+	public boolean isActive() {
+		return Active;
+	}
+
+	public void setActive(boolean active) {
+		Active = active;
+	}
 
 	public boolean isSecondary() {
 		return Secondary;

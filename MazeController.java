@@ -1,5 +1,16 @@
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 
 public class MazeController implements MazeInterface{
@@ -120,6 +131,62 @@ Random randomize=new Random();
 		return MazeP2P.Beanobj;
 	}
 
+	
+	public MazeBean quitGame(PlayerInfo playerInfo){
+		playerInfo=MazeP2P.Beanobj.getPlayerList().get(playerInfo.getPlayerID());
+		MazeP2P.Beanobj.getMazeGrid().put(playerInfo.getPlayerPosition(), "0");
+		MazeP2P.Beanobj.setMazeGrid(MazeP2P.Beanobj.getMazeGrid());
+		playerInfo.setResponseFromServer("Player ["+playerInfo.getPlayerName()+"] has quited the game.");
+		MazeP2P.Beanobj.getPlayerList().put(playerInfo.getPlayerID(), playerInfo);	
+		MazeP2P.Beanobj.getPlayerList().remove(playerInfo.getPlayerID());
+		return MazeP2P.Beanobj;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public MazeBean computeWinner() throws RemoteException {
+		// TODO Auto-generated method stub
+		TreeMap PlayerTressureMap=new TreeMap();
+		PlayerInfo PlayerObj;
+		
+		for(Entry<Integer, PlayerInfo> Player :MazeP2P.Beanobj.getPlayerList().entrySet()){
+			PlayerObj=Player.getValue();
+			PlayerTressureMap.put(PlayerObj.getPlayerID(), PlayerObj.getCollectedTreasure());
+			
+		}
+		PlayerTressureMap=(TreeMap) SortMap(PlayerTressureMap);
+		int winnerPlayerID=(int) PlayerTressureMap.firstKey();
+	
+		PlayerObj=MazeP2P.Beanobj.getPlayerList().get(winnerPlayerID);
+		PlayerObj.getPlayerName();
+		PlayerObj.getPlayerID();
+		PlayerObj.setWinner(true);
+		MazeP2P.Beanobj.getPlayerList().put(winnerPlayerID, PlayerObj);		
+		return MazeP2P.Beanobj;
+	}
+	
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Map SortMap(TreeMap unsortedPlayermap) {	 
+		@SuppressWarnings("rawtypes")
+		List tempList = new LinkedList(unsortedPlayermap.entrySet());
+	 
+		Collections.sort(tempList, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((Comparable) ((Map.Entry) (o1)).getValue())
+							.compareTo(((Map.Entry) (o2)).getValue());
+			}
+		});
+	 
+		TreeMap sortedPlayermap = new TreeMap();
+		for (Iterator it = tempList.iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			sortedPlayermap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedPlayermap;
+	}
+	
 }
 
  

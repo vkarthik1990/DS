@@ -77,7 +77,7 @@ public class MazeP2P {
 		
 		
 		try {
-
+			Playerobj.setPlayerPort(port);
 			Playerobj=MazeStub.joinGame(Playerobj);
 			if(!("").equals(Playerobj.getPlayerName())){
 				
@@ -91,9 +91,17 @@ public class MazeP2P {
 				
 				MazeP2P.Beanobj=MazeStub.getMazeBean(Playerobj);
 				
+				Playerobj=MazeP2P.Beanobj.getPlayerList().get(Playerobj.getPlayerID());
+						
+				
+				
 				MazeP2P.Beanobj.DisplayMazeGrid(MazeP2P.Beanobj.getMazeGrid());
 				
 				MazeP2P.MazeGUIobj=new MazeGUI(Playerobj);
+				
+				Thread gameStatusThread=new Thread(new gameStatusThread(Playerobj,MazeGUIobj)); 
+				gameStatusThread.start();
+				
 			}
 			
 			
@@ -143,6 +151,7 @@ public class MazeP2P {
 		P2PObj=new MazeP2P();
 		
 		PlayerInfo Playerobj=new PlayerInfo();
+		
 		Val =new Validate();
 		
 		P2PObj.InitializeMaze(Playerobj);

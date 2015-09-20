@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.List;
@@ -20,12 +21,15 @@ public class MazeGUI extends JFrame implements KeyListener {
 	Graphics g;
 	JFrame Jframeobj;
 	JPanel JPanelObj;
-
+	JPanel panelInfo;
+	JLabel Tressure = new JLabel("Treassure Collected:");
+	JLabel RespFromServer = new JLabel("\n Server Response:");
+	
 	Random randomize = new Random();
 	private int N, M;
 	private int[][] coordinates;
 	private Map<Integer, String> MazeGrid=MazeP2P.Beanobj.getMazeGrid();
-	private Map<Integer, JLabel> JLabelMap;
+	public Map<Integer, JLabel> JLabelMap;
     private int sizeOfLabel = 0;
 	public MazeGUI(PlayerInfo Playerobj) {
 		PlayerObj=Playerobj;
@@ -33,6 +37,8 @@ public class MazeGUI extends JFrame implements KeyListener {
 		MazeBean Beanobj=MazeP2P.Beanobj;
 		
 		Jframeobj = new JFrame();
+		panelInfo = new JPanel();
+		panelInfo.setSize(700, 50);
 		JPanelObj = new JPanel(new GridLayout(Beanobj.getGridSize(), Beanobj.getGridSize()));
 		Jframeobj.setTitle("[ "+Playerobj.getPlayerName()+"] Maze Game");
 		sizeOfLabel = 800/Beanobj.getGridSize();
@@ -46,6 +52,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 		M = Beanobj.getTreasure();
 		Jframeobj.addKeyListener(this);
 		initPanelComponents();
+		Jframeobj.add(panelInfo);
 		Jframeobj.add(JPanelObj);
 	}
 
@@ -56,10 +63,6 @@ public class MazeGUI extends JFrame implements KeyListener {
 	
 	private void initPanelComponents() {
 		createMazeGridFrame(N, M);
-		
-		for (int label: JLabelMap.keySet()) {
-			JPanelObj.add(JLabelMap.get(label));
-		}
 	}
 
 	public void DisplayMazeGridinBoard(Map<Integer, String> mazeGrid,
@@ -67,6 +70,11 @@ public class MazeGUI extends JFrame implements KeyListener {
 
 		JPanelObj.setFocusable(true);
 		JPanelObj.removeAll();
+		if(MazeP2P.Beanobj.getPlayerList().containsKey(PlayerObj.getPlayerID())){
+			PlayerObj=MazeP2P.Beanobj.getPlayerList().get(PlayerObj.getPlayerID());
+			Tressure.setText("Treassure Collected: "+PlayerObj.getCollectedTreasure());
+			RespFromServer.setText("Server Response:"+PlayerObj.getResponseFromServer());
+		}
 		
 		ArrayList GridValues = new ArrayList(mazeGrid.values());
 		int count=0;
@@ -85,6 +93,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 		
 		Jframeobj.repaint();
 		JPanelObj.repaint();
+		panelInfo.repaint();
 
 	}
 
@@ -98,6 +107,19 @@ public class MazeGUI extends JFrame implements KeyListener {
 		DisplayMazeGridinBoard(MazeGrid, JLabelMap, Jframeobj);
 	}
 	public void InitializeGrid(){
+		
+		//Intialize Info Labels
+		setLayout(new BorderLayout());
+		//JLabel Tressure = new JLabel("Treassure Collected:");
+		//JLabel RespFromServer = new JLabel("Server Response:");
+		Tressure.setSize(700, 50);
+		RespFromServer.setSize(700, 50);
+		panelInfo.add(Tressure);
+		panelInfo.add(RespFromServer);
+		
+		add(panelInfo, BorderLayout.NORTH);
+        add(JPanelObj, BorderLayout.CENTER);
+        
 		// Initialize the Mazegrid
 				int temp = 0;
 				for (int i = 0; i < N; i++) {
@@ -209,6 +231,16 @@ public class MazeGUI extends JFrame implements KeyListener {
 				e1.printStackTrace();
 			}
 			System.out.println("\n ["+ PlayerObj.getPlayerName()+ "]   has  done a NO MOVE and Game state is synchronised with server");
+			break;
+		case KeyEvent.VK_Q:
+			try {
+				MazeP2P.Beanobj=MazeP2P.MazeStub.quitGame(PlayerObj);
+				Jframeobj.dispose();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			//System.out.println(MazeP2P.Beanobj.getResponseFromServer());
 			break;
 		default:
 			System.out.println("\n ["+ PlayerObj.getPlayerName()+ "]   : INVALID MOVE");

@@ -10,6 +10,10 @@ public interface MazeInterface extends Remote{
 	
 	public MazeBean getMazeBean(PlayerInfo playerInfo) throws RemoteException;
 	
+	public MazeBean computeWinner() throws RemoteException;
+	
+	public MazeBean quitGame(PlayerInfo playerInfo) throws RemoteException;
+	
 	
 	
 }

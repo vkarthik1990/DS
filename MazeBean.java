@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +18,7 @@ public class MazeBean implements Serializable {
 	private long GameStartTime=0L;
 	private Map<Integer, PlayerInfo> PlayerList=new ConcurrentHashMap<Integer, PlayerInfo>();
 	
-	
+
 	public long getGameStartTime() {
 		return GameStartTime;
 	}
@@ -111,6 +112,7 @@ public class MazeBean implements Serializable {
 				else if(("X").equals(MazeGrid.get(coordinates[randRow][randColumn]))){
 					MazeGrid.put(coordinates[randRow][randColumn], PlayerObj.getPlayerName());
 					PlayerObj.collectedTreasure++;
+					this.setTreasureCount(this.getTreasureCount()-1);
 					IsSuccess=true;
 					System.out.println("Hurray ! You have collected a tressure without moving....");
 					PlayerObj.setPlayerPosition(coordinates[randRow][randColumn]);
@@ -168,6 +170,7 @@ public class MazeBean implements Serializable {
 					|| MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) {
 				if (MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) {
 					PlayerObj.setCollectedTreasure(CollectedTreassure + 1);
+					MazeP2P.Beanobj.setTreasureCount(MazeP2P.Beanobj.getTreasureCount()-1);
 				}
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn],
@@ -185,8 +188,10 @@ public class MazeBean implements Serializable {
 			newColumn = currentColumn - 1;
 			if (MazeGrid.get(coordinates[newRow][newColumn]).equals("0")
 					|| MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) {
-				if (MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
+				if (MazeGrid.get(coordinates[newRow][newColumn]).equals("X")){
 					PlayerObj.setCollectedTreasure(CollectedTreassure + 1);
+					MazeP2P.Beanobj.setTreasureCount(MazeP2P.Beanobj.getTreasureCount()-1);
+				}
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn],
 						PlayerObj.getPlayerName());
@@ -203,8 +208,11 @@ public class MazeBean implements Serializable {
 			newRow = currentRow + 1;
 			if (MazeGrid.get(coordinates[newRow][newColumn]).equals("0")
 					|| MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) {
-				if (MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
+				if (MazeGrid.get(coordinates[newRow][newColumn]).equals("X")){
 					PlayerObj.setCollectedTreasure(CollectedTreassure + 1);
+					MazeP2P.Beanobj.setTreasureCount(MazeP2P.Beanobj.getTreasureCount()-1);
+				}
+				
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn],PlayerObj.getPlayerName());
 				PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
@@ -220,8 +228,9 @@ public class MazeBean implements Serializable {
 			newColumn = currentColumn + 1;
 			if (MazeGrid.get(coordinates[newRow][newColumn]).equals("0")
 					|| MazeGrid.get(coordinates[newRow][newColumn]).equals("X")) {
-				if (MazeGrid.get(coordinates[newRow][newColumn]).equals("X"))
+				if (MazeGrid.get(coordinates[newRow][newColumn]).equals("X")){
 					PlayerObj.setCollectedTreasure(CollectedTreassure + 1);
+				MazeP2P.Beanobj.setTreasureCount(MazeP2P.Beanobj.getTreasureCount()-1);}
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn],
 						PlayerObj.getPlayerName());
@@ -283,6 +292,7 @@ public class MazeBean implements Serializable {
 				NoTreasures = ScannerObj.next();
 			}
 			this.setTreasure(Integer.parseInt(NoTreasures));
+			this.setTreasureCount(Integer.parseInt(NoTreasures));
 		}catch(Exception e){
 			System.out.println("Exception: "+e);
 		}
@@ -304,6 +314,14 @@ public class MazeBean implements Serializable {
 			System.out.print(value + "\t");
 		}
 
+	}
+	
+	
+	public void selectSecondaryServer(){
+		for(Entry<Integer, PlayerInfo> Player :this.getPlayerList().entrySet()){
+			PlayerInfo PlayerObj=Player.getValue();
+			
+		}
 	}
 	
 	
