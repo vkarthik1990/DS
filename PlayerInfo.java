@@ -8,10 +8,39 @@ public class PlayerInfo implements Serializable{
 	  int collectedTreasure;
 	  boolean Primary;
 	  boolean Secondary;
-	  boolean Active,winner;
-	  private String responseFromServer; 
+	  boolean Active=true;
+	  boolean winner;
+	  private String responseFromServer;
+	  long lastActiveTime=System.currentTimeMillis();
+	  private int portNum;
+	  private String IPaddress;
 	  
-	  public String getResponseFromServer() {
+	  
+	  public int getPortNum() {
+		return portNum;
+	}
+
+	public void setPortNum(int portNum) {
+		this.portNum = portNum;
+	}
+
+	public String getIPaddress() {
+		return IPaddress;
+	}
+
+	public void setIPaddress(String iPaddress) {
+		IPaddress = iPaddress;
+	}
+
+	public long getLastActiveTime() {
+		return lastActiveTime;
+	}
+
+	public void setLastActiveTime(long lastActiveTime) {
+		this.lastActiveTime = lastActiveTime;
+	}
+
+	public String getResponseFromServer() {
 		return responseFromServer;
 	}
 

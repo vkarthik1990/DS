@@ -34,7 +34,7 @@ Random randomize=new Random();
 				if(MazeP2P.Beanobj.getPlayerList().isEmpty())
 				{
 					
-					
+					MazeP2P.Beanobj.setPrimaryPortNum(playerObj.getPlayerPort());
 					//Initilize
 					initializePrimaryPlayer(playerObj);
 					
@@ -45,16 +45,15 @@ Random randomize=new Random();
 					updateSecondary();
 					
 					
-					//IsActiveChecker thread
-					isAlive();
+					
 					
 					Thread timerThread = new Thread(new MazeThread());	
-					MazeP2P.Beanobj.setGameStartTime(System.currentTimeMillis() + 10000);
+					MazeP2P.Beanobj.setGameStartTime(System.currentTimeMillis() + 20000);
 					timerThread.start();
 					
 				}
 				else if(MazeP2P.Beanobj.getPlayerList().size()==1){
-					
+					MazeP2P.Beanobj.setSecondaryPortNum(playerObj.getPlayerPort());
 					playerObj.setSecondary(true);
 					MazeP2P.Beanobj.getPlayerList().put(playerObj.getPlayerID(), playerObj);
 				}
@@ -71,8 +70,9 @@ Random randomize=new Random();
 			playerObj.setPlayerName("");
 		}
 		
-		
-		
+		//IsActiveChecker thread
+		//isAlive();
+		//Active();
 		
 		return playerObj;
 		
@@ -81,8 +81,14 @@ Random randomize=new Random();
 	
 	private void isAlive() {
 		// TODO Auto-generated method stub
+
 		
 	}
+	
+	
+
+	
+	 
 
 	private void monitorGameStatus() {
 		// TODO Auto-generated method stub
@@ -105,12 +111,13 @@ Random randomize=new Random();
 	public MazeBean move(PlayerInfo playerInfo, String direction,int GridSize){
 		//GUIObj.PlayerMoves(playerInfo,direction,GridSize)
 		MazeP2P.Beanobj.PlayerMoves(playerInfo, direction, GridSize);
+		MazeP2P.Beanobj.getPlayerList().get(playerInfo.getPlayerID()).setLastActiveTime(System.currentTimeMillis());
 		return MazeP2P.Beanobj;
 		
 	}
 	
 	 public class MazeThread implements Runnable{
-		 int WaitTime=10000;
+		 int WaitTime=20000;
 		@Override
 		public void run() {
 			try {
@@ -133,20 +140,24 @@ Random randomize=new Random();
 
 	
 	public MazeBean quitGame(PlayerInfo playerInfo){
+		synchronized(MazeP2P.Beanobj.getPlayerList().get(playerInfo.getPlayerID())){
 		playerInfo=MazeP2P.Beanobj.getPlayerList().get(playerInfo.getPlayerID());
 		MazeP2P.Beanobj.getMazeGrid().put(playerInfo.getPlayerPosition(), "0");
 		MazeP2P.Beanobj.setMazeGrid(MazeP2P.Beanobj.getMazeGrid());
 		playerInfo.setResponseFromServer("Player ["+playerInfo.getPlayerName()+"] has quited the game.");
 		MazeP2P.Beanobj.getPlayerList().put(playerInfo.getPlayerID(), playerInfo);	
 		MazeP2P.Beanobj.getPlayerList().remove(playerInfo.getPlayerID());
-		return MazeP2P.Beanobj;
+		}
 		
+		return MazeP2P.Beanobj;		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public MazeBean computeWinner() throws RemoteException {
 		// TODO Auto-generated method stub
+		MazeP2P.Beanobj.setGameover(true);
+		
 		TreeMap PlayerTressureMap=new TreeMap();
 		PlayerInfo PlayerObj;
 		
@@ -155,22 +166,21 @@ Random randomize=new Random();
 			PlayerTressureMap.put(PlayerObj.getPlayerID(), PlayerObj.getCollectedTreasure());
 			
 		}
-		PlayerTressureMap=(TreeMap) SortMap(PlayerTressureMap);
-		int winnerPlayerID=(int) PlayerTressureMap.firstKey();
+		int winnerPlayerID= SortMap(PlayerTressureMap);
+		//int winnerPlayerID=(int) PlayerTressureMap.firstKey();
 	
 		PlayerObj=MazeP2P.Beanobj.getPlayerList().get(winnerPlayerID);
-		PlayerObj.getPlayerName();
-		PlayerObj.getPlayerID();
-		PlayerObj.setWinner(true);
-		MazeP2P.Beanobj.getPlayerList().put(winnerPlayerID, PlayerObj);		
+		System.out.println("Winner is : "+PlayerObj.getPlayerName());
+		//PlayerObj.setWinner(true);
+		MazeP2P.Beanobj.getPlayerList().get(winnerPlayerID).setWinner(true);		
 		return MazeP2P.Beanobj;
 	}
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Map SortMap(TreeMap unsortedPlayermap) {	 
+	public static int SortMap(TreeMap unsortedPlayermap) {	 
 		@SuppressWarnings("rawtypes")
-		List tempList = new LinkedList(unsortedPlayermap.entrySet());
+		List<Map.Entry> tempList = new LinkedList(unsortedPlayermap.entrySet());
 	 
 		Collections.sort(tempList, new Comparator() {
 			public int compare(Object o1, Object o2) {
@@ -178,15 +188,51 @@ Random randomize=new Random();
 							.compareTo(((Map.Entry) (o2)).getValue());
 			}
 		});
-	 
-		TreeMap sortedPlayermap = new TreeMap();
+		tempList.get(tempList.size()-1);
+		Map sortedPlayermap = new LinkedHashMap();
+		
+	int Winnerid=0;
 		for (Iterator it = tempList.iterator(); it.hasNext();) {
 			Map.Entry entry = (Map.Entry) it.next();
 			sortedPlayermap.put(entry.getKey(), entry.getValue());
+			Winnerid=(int) entry.getKey();
 		}
-		return sortedPlayermap;
+
+		return Winnerid;
 	}
+
+	@Override
+	public boolean updatePlayerStatus(int playerId) throws RemoteException {
+		// TODO Auto-generated method stub
+		if(MazeP2P.Beanobj.getPlayerList().get(playerId)!=null){
+		synchronized(MazeP2P.Beanobj.getPlayerList().get(playerId))
+		{	
+			try{
+					MazeP2P.Beanobj.getPlayerList().get(playerId).setLastActiveTime(System.currentTimeMillis());
+			}catch(NullPointerException e){
+				e.printStackTrace();
+			}
+		}	}
+		return true;
+		
 	
+	}
+/*	public boolean updatePlayerStatus(int playerId) throws RemoteException{
+		synchronized(MazeP2P.Beanobj)
+		{	
+			try{
+				MazeP2P.Beanobj.getPlayerList().get(playerId).setLastActiveTime(System.currentTimeMillis());
+			}catch(NullPointerException e){
+				System.out.println("Null pointer Exception");
+			}
+				
+			
+		}
+		
+		return true;
+	}*/
+	
+
 }
 
  

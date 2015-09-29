@@ -14,6 +14,8 @@ public interface MazeInterface extends Remote{
 	
 	public MazeBean quitGame(PlayerInfo playerInfo) throws RemoteException;
 	
+	public boolean updatePlayerStatus(int playerId) throws RemoteException;
+	
 	
 	
 }

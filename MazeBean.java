@@ -1,5 +1,9 @@
 import java.awt.List;
 import java.io.Serializable;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,7 +21,65 @@ public class MazeBean implements Serializable {
 	private int GridSize,Treasure,TreasureCount;
 	private long GameStartTime=0L;
 	private Map<Integer, PlayerInfo> PlayerList=new ConcurrentHashMap<Integer, PlayerInfo>();
+	static boolean Gameover=false;
+	boolean joinFlag=true;
+	static int DefaultPrimaryPort=2015;
+
+	//Storing Primary and Secondary IPAddress and port for use in crash handling scenarios
+	private int primaryPortNum;
+	private String primaryIPaddress="";
+	private int secondaryPortNum;
+	private String secondaryIPaddress="";
 	
+	
+	public boolean isJoinFlag() {
+		return joinFlag;
+	}
+
+	public void setJoinFlag(boolean joinFlag) {
+		this.joinFlag = joinFlag;
+	}
+	
+	public int getPrimaryPortNum() {
+		return primaryPortNum;
+	}
+
+	public void setPrimaryPortNum(int primaryPortNum) {
+		this.primaryPortNum = primaryPortNum;
+	}
+
+	public String getPrimaryIPaddress() {
+		return primaryIPaddress;
+	}
+
+	public void setPrimaryIPaddress(String primaryIPaddress) {
+		this.primaryIPaddress = primaryIPaddress;
+	}
+
+	public int getSecondaryPortNum() {
+		return secondaryPortNum;
+	}
+
+	public void setSecondaryPortNum(int secondaryPortNum) {
+		this.secondaryPortNum = secondaryPortNum;
+	}
+
+	public String getSecondaryIPaddress() {
+		return secondaryIPaddress;
+	}
+
+	public void setSecondaryIPaddress(String secondaryIPaddress) {
+		this.secondaryIPaddress = secondaryIPaddress;
+	}
+
+	
+	public boolean isGameover() {
+		return Gameover;
+	}
+
+	public void setGameover(boolean gameover) {
+		Gameover = gameover;
+	}
 
 	public long getGameStartTime() {
 		return GameStartTime;
@@ -155,6 +217,7 @@ public class MazeBean implements Serializable {
 	
 	/* Player Direction controls are placed here */
 	public void PlayerMoves(PlayerInfo PlayerObj, String direction, int GridSize) {
+			
 		PlayerObj=MazeP2P.Beanobj.getPlayerList().get(PlayerObj.getPlayerID());
 		ArrayList playercoordinates = getRowcolumns(PlayerObj.getPlayerPosition());
 		int currentRow = (int) playercoordinates.get(0);
@@ -301,9 +364,7 @@ public class MazeBean implements Serializable {
 	
 	
 	public void DisplayMazeGrid(Map<Integer, String> mazeGrid) {
-
 		Iterator iterator = mazeGrid.keySet().iterator();
-
 		while (iterator.hasNext()) {
 			int key = (int) iterator.next();
 			String value = mazeGrid.get(key).toString();
@@ -313,17 +374,54 @@ public class MazeBean implements Serializable {
 			}
 			System.out.print(value + "\t");
 		}
-
 	}
 	
 	
 	public void selectSecondaryServer(){
-		for(Entry<Integer, PlayerInfo> Player :this.getPlayerList().entrySet()){
+		boolean sec_Selected=false;
+		for(Entry<Integer, PlayerInfo> Player :MazeP2P.Beanobj.getPlayerList().entrySet()){
 			PlayerInfo PlayerObj=Player.getValue();
+			//Select a player who is not a primary or secondary
+			if(!PlayerObj.isPrimary() && !PlayerObj.isSecondary()){
+				PlayerObj.setSecondary(true);
+				PlayerObj.Secondary=true;
+				System.out.println("["+PlayerObj.getPlayerName()+"] Became Secondary Server");
+				sec_Selected=true;
+				secondaryPortNum=PlayerObj.getPlayerPort();
+				MazeP2P.Beanobj.getPlayerList().put(PlayerObj.getPlayerID(), PlayerObj);
+				Registry P2PRegistry;
+				try{
+					P2PRegistry =LocateRegistry.getRegistry("",secondaryPortNum);
+					MazeP2PInterface peerStub=(MazeP2PInterface) P2PRegistry.lookup("Peer2peer");
+					System.out.println("Before update"+secondaryPortNum);
+					System.out.println("After update sec port : "+ MazeP2P.Beanobj.getSecondaryPortNum());
+					peerStub.UpdateMazeState(MazeP2P.Beanobj);
+					broadcastPort();
+					
+					
+				}catch(RemoteException | NotBoundException e){
+					System.out.println("Exception on peer Update SelectSecondary");
+				}
+				break;
+			}
 			
-		}
+		}if(!sec_Selected)System.out.println("One player is left so secondary player cannot be created");
 	}
 	
-	
+	public void broadcastPort(){
+		Registry P2PRegistry;
+		try{
+		for(Entry<Integer, PlayerInfo> Player :MazeP2P.Beanobj.getPlayerList().entrySet()){
+			PlayerInfo PlayerObj=Player.getValue();
+			if(PlayerObj.isPrimary()||PlayerObj.isSecondary())continue;
+			P2PRegistry =LocateRegistry.getRegistry("",PlayerObj.getPlayerPort());
+			MazeP2PInterface peerStub=(MazeP2PInterface) P2PRegistry.lookup("Peer2peer");	
+			peerStub.UpdateServerInfo(MazeP2P.Beanobj);
+		}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	
 }

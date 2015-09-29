@@ -185,7 +185,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 		case KeyEvent.VK_UP:
 		case KeyEvent.VK_W:
 			try {
-				MazeP2P.Beanobj=MazeP2P.MazeStub.move(PlayerObj, "w", N);
+				MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().move(PlayerObj, "w", N);
 				System.out.println("\n["+ PlayerObj.getPlayerName()+ "]   has  Moved UP");
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
@@ -196,7 +196,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 		case KeyEvent.VK_DOWN:
 		case KeyEvent.VK_S:
 			try {
-				MazeP2P.Beanobj=MazeP2P.MazeStub.move(PlayerObj, "s", N);
+				MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().move(PlayerObj, "s", N);
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -206,7 +206,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 		case KeyEvent.VK_LEFT:
 		case KeyEvent.VK_A:
 			try {
-				MazeP2P.Beanobj=MazeP2P.MazeStub.move(PlayerObj, "a", N);
+				MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().move(PlayerObj, "a", N);
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -216,7 +216,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 		case KeyEvent.VK_RIGHT:
 		case KeyEvent.VK_D:
 			try {
-				MazeP2P.Beanobj=MazeP2P.MazeStub.move(PlayerObj, "d", N);
+				MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().move(PlayerObj, "d", N);
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -225,7 +225,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 			break;
 		case KeyEvent.VK_N:
 			try {
-				MazeP2P.Beanobj=MazeP2P.MazeStub.move(PlayerObj, "n", N);
+				MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().move(PlayerObj, "n", N);
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -234,8 +234,9 @@ public class MazeGUI extends JFrame implements KeyListener {
 			break;
 		case KeyEvent.VK_Q:
 			try {
-				MazeP2P.Beanobj=MazeP2P.MazeStub.quitGame(PlayerObj);
-				Jframeobj.dispose();
+				MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().quitGame(PlayerObj);
+				System.exit(2);
+				//Jframeobj.dispose();
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
