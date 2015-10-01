@@ -13,7 +13,7 @@ public class checkPrimaryStatus implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		System.out.println("running: "+running+"playerObj.isActive()"+playerObj.isActive());
+		//System.out.println("running: "+running+"playerObj.isActive()"+playerObj.isActive());
 	while(playerObj.isActive() && running && !(MazeP2P.Beanobj.isGameover())){
 		//System.out.println("running: "+running+"playerObj.isActive()"+playerObj.isActive()+"running the primary status check");
 		try {
@@ -24,14 +24,14 @@ public class checkPrimaryStatus implements Runnable{
 				if(tempPlayer.isPrimary()){
 					//If Primary server active time is not updated for 5s assume as crashed.
 					if((System.currentTimeMillis()-tempPlayer.getLastActiveTime())>5000){
-						System.out.println("Primary Server has Crashed");
+						System.out.println(">>>> Primary Server has Crashed");
 						//MazeP2P.P2PObj.getMazeStubsafe().quitGame(tempPlayer);
 						for(Entry<Integer, PlayerInfo> p :BeanObj.getPlayerList().entrySet()){
 							PlayerInfo secondary=p.getValue();
 							if(secondary.isSecondary()){
 								//playerObj.setPrimary(true);
 								//playerObj.setSecondary(false);
-								System.out.println("playerobj: "+playerObj.getPlayerName()+secondary.getPlayerName());
+								//System.out.println("playerobj: "+playerObj.getPlayerName()+secondary.getPlayerName());
 								playerObj=MazeP2P.Beanobj.getPlayerList().get(secondary.getPlayerID());
 								playerObj.setPrimary(true);
 								playerObj.setSecondary(false);
@@ -41,7 +41,7 @@ public class checkPrimaryStatus implements Runnable{
 								MazeP2P.Beanobj.getPlayerList().get(secondary.getPlayerID()).setSecondary(false);
 								//MazeP2P.Beanobj.getPlayerList().get(secondary.getPlayerID()).Secondary=false;
 								MazeP2P.Beanobj.selectSecondaryServer();
-								System.out.println("["+secondary.getPlayerName()+"] secondary server is made as primary server");
+								System.out.println(">>>> ["+secondary.getPlayerName()+"] secondary server is made as primary server");
 							}
 						}MazeP2P.P2PObj.getMazeStubsafe().quitGame(tempPlayer);
 					}

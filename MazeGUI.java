@@ -137,9 +137,9 @@ public class MazeGUI extends JFrame implements KeyListener {
 	
 
 	public void DisplayMazeGrid(Map<Integer, String> mazeGrid) {
-
+		System.out.print("[SERVER]:");
 		Iterator iterator = mazeGrid.keySet().iterator();
-
+		
 		while (iterator.hasNext()) {
 			int key = (int) iterator.next();
 			String value = mazeGrid.get(key).toString();
@@ -149,7 +149,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 			}
 			System.out.print(value + "\t");
 		}
-
+		System.out.print("\n");
 	}
 
 
@@ -186,7 +186,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 		case KeyEvent.VK_W:
 			try {
 				MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().move(PlayerObj, "w", N);
-				System.out.println("\n["+ PlayerObj.getPlayerName()+ "]   has  Moved UP");
+				System.out.println("\n >>>> ["+ PlayerObj.getPlayerName()+ "]   has  Moved UP");
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -201,7 +201,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			System.out.println("\n ["+ PlayerObj.getPlayerName()+ "]   has  Moved DOWN");
+			System.out.println("\n>>>> ["+ PlayerObj.getPlayerName()+ "]   has  Moved DOWN");
 			break;
 		case KeyEvent.VK_LEFT:
 		case KeyEvent.VK_A:
@@ -211,7 +211,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			System.out.println("\n ["+ PlayerObj.getPlayerName()+ "]   has  Moved LEFT");
+			System.out.println("\n>>>> ["+ PlayerObj.getPlayerName()+ "]   has  Moved LEFT");
 			break;
 		case KeyEvent.VK_RIGHT:
 		case KeyEvent.VK_D:
@@ -221,7 +221,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			System.out.println("\n ["+ PlayerObj.getPlayerName()+ "]   has  Moved RIGHT");
+			System.out.println("\n>>>> ["+ PlayerObj.getPlayerName()+ "]   has  Moved RIGHT");
 			break;
 		case KeyEvent.VK_N:
 			try {
@@ -230,7 +230,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			System.out.println("\n ["+ PlayerObj.getPlayerName()+ "]   has  done a NO MOVE and Game state is synchronised with server");
+			System.out.println("\n>>>> ["+ PlayerObj.getPlayerName()+ "]   has  done a NO MOVE and Game state is synchronised with server");
 			break;
 		case KeyEvent.VK_Q:
 			try {
@@ -244,7 +244,7 @@ public class MazeGUI extends JFrame implements KeyListener {
 			//System.out.println(MazeP2P.Beanobj.getResponseFromServer());
 			break;
 		default:
-			System.out.println("\n ["+ PlayerObj.getPlayerName()+ "]   : INVALID MOVE");
+			System.out.println("\n>>>> ["+ PlayerObj.getPlayerName()+ "]   : INVALID MOVE");
 		}
 		DisplayMazeGrid(MazeP2P.Beanobj.getMazeGrid());
 		DisplayMazeGridinBoard(MazeP2P.Beanobj.getMazeGrid(),JLabelMap, Jframeobj);

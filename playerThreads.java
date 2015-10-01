@@ -32,7 +32,7 @@ public class playerThreads implements Runnable{
 			Thread isPlayerAlive = new Thread(new peerActiveness());	
 			isPlayerAlive.start();
 			primary=true;
-			System.out.println("["+playerObj.getPlayerName()+"]Selected as Primary server");
+			System.out.println(">>>> ["+playerObj.getPlayerName()+"]Selected as Primary server");
 		}
 		//System.out.println("playerObj.isSecondary()     : "+playerObj.isSecondary());
 		if(playerObj.isSecondary()){ if(secondary)continue;
@@ -43,7 +43,7 @@ public class playerThreads implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("Threads for Secondary server Started");
+			System.out.println(">>>> Threads for Secondary server Started");
 			Thread checkPrimStatus = new Thread(new checkPrimaryStatus(playerObj));
 			checkPrimStatus.start();
 			
@@ -52,7 +52,7 @@ public class playerThreads implements Runnable{
 			
 			
 			secondary=true;
-			System.out.println("["+playerObj.getPlayerName()+"]Selected as Secondary server");
+			System.out.println(">>>> ["+playerObj.getPlayerName()+"]Selected as Secondary server");
 		}
 		
 		try {
@@ -72,20 +72,20 @@ public class playerThreads implements Runnable{
 		for(Entry<Integer, PlayerInfo> player :Beanobj.getPlayerList().entrySet()){
 			PlayerInfo tempPlayer=player.getValue();
 			if(tempPlayer.isPrimary()){
-				System.out.println("Primary is"+tempPlayer.getPlayerName());
+				System.out.println(">>>> Primary is"+tempPlayer.getPlayerName());
 			}else if(tempPlayer.isSecondary())System.out.println("Secondary is"+tempPlayer.getPlayerName());
 		}
 	}
 	
 	private void bindSecondarytoRMI(MazeBean Beanobj) {
-		System.out.println("Binding the New Secondary to RMI");
+		System.out.println(">>>> Binding the New Secondary to RMI");
 		// TODO Auto-generated method stub
 		Registry MazeRegistry=null;
 		MazeController MazeObj=new MazeController();
 		try{
 			System.setProperty("java.rmi.server.hostname","");
 			MazeInterface MazeStub = (MazeInterface) UnicastRemoteObject.exportObject(MazeObj, 0);	
-			System.out.println("Secondary port number"+Beanobj.getSecondaryPortNum());
+			System.out.println(">>>> Secondary port number"+Beanobj.getSecondaryPortNum());
 			MazeRegistry=LocateRegistry.getRegistry(Beanobj.getSecondaryIPaddress(),Beanobj.getSecondaryPortNum());
 			MazeRegistry.bind("MazeP2P", MazeStub);
 			//MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().getMazeBean(playerObj);
@@ -111,12 +111,12 @@ public class playerThreads implements Runnable{
 							//player.setActive(false);
 							if((System.currentTimeMillis()-player.getLastActiveTime())>7000){
 								if(player.isSecondary()){
-									System.out.println("["+player.getPlayerName()+"] Secondary Server has crashed or quited");
+									System.out.println(">>>> ["+player.getPlayerName()+"] Secondary Server has crashed or quited");
 									MazeP2P.P2PObj.getMazeStubsafe().quitGame(player);
 									MazeP2P.Beanobj.selectSecondaryServer();
 								}
 								else{
-									System.out.println("["+player.getPlayerName()+"]  player has crashed or quited");
+									System.out.println(">>>> ["+player.getPlayerName()+"]  player has crashed or quited");
 									MazeP2P.P2PObj.getMazeStubsafe().quitGame(player);
 								}
 										

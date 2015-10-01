@@ -56,7 +56,7 @@ public class MazeP2P {
 				P2PRegistry=LocateRegistry.createRegistry(port);
 				P2PRegistry.bind("Peer2peer", PeerStub);
 				Playerobj.setPlayerPort(port);
-				System.out.println("[DEBUG]: PEER TO PEER RMI CREATED"+P2PRegistry.toString());
+				System.out.println(">>>> PEER TO PEER RMI CREATED"+P2PRegistry.toString());
 			}catch (AlreadyBoundException ex) {
 				System.out.println("[Exception]: AlreadyBoundException");
 			} catch(RemoteException ex) {
@@ -85,14 +85,17 @@ public class MazeP2P {
 			if(!("").equals(Playerobj.getPlayerName())){
 				MazeP2P.Beanobj=MazeStub.getMazeBean(Playerobj);
 			
-				MazeP2P.Beanobj.DisplayMazeGrid(MazeP2P.Beanobj.getMazeGrid());
+				//MazeP2P.Beanobj.DisplayMazeGrid(MazeP2P.Beanobj.getMazeGrid());
+				System.out.println(">>>> Please wait for [ "+Playerobj.getGameWaitTime()+"] for game to start.");
 				while(!(MazeP2P.Beanobj.getGameStartTime()<System.currentTimeMillis())){
 					//20 Seconds wait till game start...
 				}
 				MazeP2P.Beanobj.setJoinFlag(false);
-				System.out.println("*********20 SECONDS OVER GAMESTARTS !***************");
+				System.out.println(">>>> *******************20 SECONDS OVER GAMESTARTS NOW !*****************");
 				
 				playerAlive paobj=new playerAlive(Playerobj);
+				
+				//MazeP2P.Beanobj=MazeStub.getMazeBean(Playerobj);
 				
 				MazeP2P.MazeGUIobj=new MazeGUI(Playerobj);
 				
@@ -108,7 +111,7 @@ public class MazeP2P {
 				
 				Playerobj=MazeP2P.Beanobj.getPlayerList().get(Playerobj.getPlayerID());
 						
-				MazeP2P.Beanobj.DisplayMazeGrid(MazeP2P.Beanobj.getMazeGrid());
+				//MazeP2P.Beanobj.DisplayMazeGrid(MazeP2P.Beanobj.getMazeGrid());
 				
 				
 				
@@ -129,12 +132,12 @@ public class MazeP2P {
 		MazeP2P.Beanobj=new MazeBean();
 		
 		//Get the Player Name from the User....
-		System.out.println("Welcome! Enter Player Name:");
+		System.out.println(">>>> Welcome! Enter Player Name:");
 		Scanner ScannerObj = new Scanner(System.in);
 		String PlayerName = ScannerObj.next();
 		try{
 			while(!MazeP2P.Val.isvalidName(PlayerName)){
-				System.out.println("Please Enter a Valid Name....  ");
+				System.out.println(">>>> Please Enter a Valid Name:  ");
 				PlayerName = ScannerObj.next();
 			}
 			Playerobj.setPlayerName(PlayerName);
@@ -172,7 +175,7 @@ public class MazeP2P {
 				MazeStub=(MazeInterface) MazeRegistry.lookup("MazeP2P");
 			} catch (RemoteException | NotBoundException e) {
 				// TODO Auto-generated catch block
-				System.out.println("[EXCEPTION]: MazeP2P RMI not found.. trying to connect secondary Port..."+MazeP2P.Beanobj.getSecondaryPortNum());
+				//System.out.println("[EXCEPTION]: MazeP2P RMI not found.. trying to connect secondary Port..."+MazeP2P.Beanobj.getSecondaryPortNum());
 			}
 		}	
 		return MazeStub;

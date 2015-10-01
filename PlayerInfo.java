@@ -14,7 +14,16 @@ public class PlayerInfo implements Serializable{
 	  long lastActiveTime=System.currentTimeMillis();
 	  private int portNum;
 	  private String IPaddress;
+	  private long gameWaitTime=0L;
 	  
+	  
+		public long getGameWaitTime() {
+			return gameWaitTime;
+		}
+
+		public void setGameWaitTime(long gameWaitTime) {
+			this.gameWaitTime = gameWaitTime;
+		}
 	  
 	  public int getPortNum() {
 		return portNum;

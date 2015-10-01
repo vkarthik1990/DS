@@ -15,6 +15,7 @@ import java.util.TreeMap;
 
 public class MazeController implements MazeInterface{
 
+int playerCount=0;
 Random randomize=new Random();
 
 
@@ -62,10 +63,10 @@ Random randomize=new Random();
 					MazeP2P.Beanobj.getPlayerList().put(playerObj.getPlayerID(), playerObj);
 				}
 				MazeP2P.Beanobj.AddPlayertoMaze( playerObj);
-				System.out.println("Player ["+playerObj.getPlayerName()+"] is set into the server and his PLAYER_ID is : ["+playerObj.getPlayerID()+"]");
+				System.out.println(">>>> Player ["+playerObj.getPlayerName()+"] is set into the server and his PLAYER_ID is : ["+playerObj.getPlayerID()+"]");
 			}
 		}else{
-			System.out.println("Sorry ["+playerObj.getPlayerName()+"] game Already started ! Please try after sometime.");
+			System.out.println(">>>> Sorry ["+playerObj.getPlayerName()+"] game Already started ! Please try after sometime.");
 			MazeP2P.Beanobj.setGameStartTime(0);
 			playerObj.setPlayerName("");
 		}
@@ -73,7 +74,8 @@ Random randomize=new Random();
 		//IsActiveChecker thread
 		//isAlive();
 		//Active();
-		
+		//MazeP2P.Beanobj.setPlayerCount(playerCount++);
+		playerObj.setGameWaitTime(MazeP2P.Beanobj.getGameStartTime()-System.currentTimeMillis());
 		return playerObj;
 		
 }
@@ -121,7 +123,7 @@ Random randomize=new Random();
 		@Override
 		public void run() {
 			try {
-				System.out.println("Game will start in 20s");
+				System.out.println(">>>> Game will start in 20s");
 				Thread.sleep(WaitTime);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -156,6 +158,8 @@ Random randomize=new Random();
 	@Override
 	public MazeBean computeWinner() throws RemoteException {
 		// TODO Auto-generated method stub
+		synchronized(MazeP2P.Beanobj)
+		{
 		MazeP2P.Beanobj.setGameover(true);
 		
 		TreeMap PlayerTressureMap=new TreeMap();
@@ -170,9 +174,10 @@ Random randomize=new Random();
 		//int winnerPlayerID=(int) PlayerTressureMap.firstKey();
 	
 		PlayerObj=MazeP2P.Beanobj.getPlayerList().get(winnerPlayerID);
-		System.out.println("Winner is : "+PlayerObj.getPlayerName());
+		//System.out.println("Winner is : "+PlayerObj.getPlayerName());
 		//PlayerObj.setWinner(true);
-		MazeP2P.Beanobj.getPlayerList().get(winnerPlayerID).setWinner(true);		
+		MazeP2P.Beanobj.getPlayerList().get(winnerPlayerID).setWinner(true);
+		}
 		return MazeP2P.Beanobj;
 	}
 	

@@ -32,7 +32,7 @@ public class playerAlive {
 				}
 			}
 			
-			System.out.println("Game over thread stopped."+MazeP2P.Beanobj.isGameover());
+			System.out.println(">>>> Game over thread stopped."+MazeP2P.Beanobj.isGameover());
 			
 		}	
 		 

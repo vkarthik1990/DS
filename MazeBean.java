@@ -167,16 +167,16 @@ public class MazeBean implements Serializable {
 				randColumn = randomize.nextInt(this.GridSize);
 				
 				if(!("X").equals(MazeGrid.get(coordinates[randRow][randColumn])) && ("0").equals(MazeGrid.get(coordinates[randRow][randColumn]))){
-					MazeGrid.put(coordinates[randRow][randColumn], PlayerObj.getPlayerName());
+					MazeGrid.put(coordinates[randRow][randColumn], PlayerObj.getPlayerName()+"["+PlayerObj.getCollectedTreasure()+"]");
 					PlayerObj.setPlayerPosition(coordinates[randRow][randColumn]);
 					IsSuccess=true;
 				}
 				else if(("X").equals(MazeGrid.get(coordinates[randRow][randColumn]))){
-					MazeGrid.put(coordinates[randRow][randColumn], PlayerObj.getPlayerName());
+					MazeGrid.put(coordinates[randRow][randColumn], PlayerObj.getPlayerName()+"["+PlayerObj.getCollectedTreasure()+"]");
 					PlayerObj.collectedTreasure++;
 					this.setTreasureCount(this.getTreasureCount()-1);
 					IsSuccess=true;
-					System.out.println("Hurray ! You have collected a tressure without moving....");
+					System.out.println(">>>> Hurray ! You have collected a tressure without moving....");
 					PlayerObj.setPlayerPosition(coordinates[randRow][randColumn]);
 				}
 			}
@@ -237,13 +237,13 @@ public class MazeBean implements Serializable {
 				}
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn],
-						PlayerObj.getPlayerName());
+						PlayerObj.getPlayerName()+"["+PlayerObj.getCollectedTreasure()+"]");
 				PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
 				MazeP2P.MazeGUIobj.DisplayMazeGrid(MazeGrid);
 
 			} else {
 				newRow = currentRow;
-				System.out.println("Move Unsuccessfull!  Player ["
+				System.out.println(">>>> Move Unsuccessfull!  Player ["
 						+ PlayerObj.getPlayerName() + "]   Cannot move Up");
 			}
 		} else if (direction.equalsIgnoreCase("a") && (currentColumn - 1) != -1) // Left
@@ -257,13 +257,13 @@ public class MazeBean implements Serializable {
 				}
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn],
-						PlayerObj.getPlayerName());
+						PlayerObj.getPlayerName()+"["+PlayerObj.getCollectedTreasure()+"]");
 				PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
 				MazeP2P.MazeGUIobj.DisplayMazeGrid(MazeGrid);
 
 			} else {
 				newColumn = currentColumn;
-				System.out.println("Move Unsuccessfull!    Player ["
+				System.out.println(">>>> Move Unsuccessfull!    Player ["
 						+ PlayerObj.getPlayerName() + "]    Cannot move Left");
 			}
 		} else if (direction.equalsIgnoreCase("s") && currentRow + 1 < GridSize) // down
@@ -277,12 +277,12 @@ public class MazeBean implements Serializable {
 				}
 				
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
-				MazeGrid.put(coordinates[newRow][newColumn],PlayerObj.getPlayerName());
+				MazeGrid.put(coordinates[newRow][newColumn],PlayerObj.getPlayerName()+"["+PlayerObj.getCollectedTreasure()+"]");
 				PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
 				MazeP2P.MazeGUIobj.DisplayMazeGrid(MazeGrid);
 			} else {
 				newRow = currentRow;
-				System.out.println("Move Unsuccessfull!    Player ["
+				System.out.println(">>>> Move Unsuccessfull!    Player ["
 						+ PlayerObj.getPlayerName() + "]    Cannot move Down");
 			}
 		} else if (direction.equalsIgnoreCase("d")
@@ -296,7 +296,7 @@ public class MazeBean implements Serializable {
 				MazeP2P.Beanobj.setTreasureCount(MazeP2P.Beanobj.getTreasureCount()-1);}
 				MazeGrid.put(coordinates[currentRow][currentColumn], "0");
 				MazeGrid.put(coordinates[newRow][newColumn],
-						PlayerObj.getPlayerName());
+						PlayerObj.getPlayerName()+"["+PlayerObj.getCollectedTreasure()+"]");
 				PlayerObj.setPlayerPosition(coordinates[newRow][newColumn]);
 				MazeP2P.MazeGUIobj.DisplayMazeGrid(MazeGrid);
 			} else {
@@ -310,7 +310,7 @@ public class MazeBean implements Serializable {
 			System.out.println(" \n["+ PlayerObj.getPlayerName() + "]  pressed No Move !  ");
 		}		
 		else {
-			System.out.println("Move Unsuccessful !   ["
+			System.out.println(">>>> Move Unsuccessful !   ["
 					+ PlayerObj.getPlayerName() + "]     is at the GRID EDGES");
 		}
 		MazeP2P.Beanobj.getPlayerList().put(PlayerObj.getPlayerID(), PlayerObj);
@@ -334,11 +334,11 @@ public class MazeBean implements Serializable {
 	public void getinitDetails(PlayerInfo playerObj){
 		Scanner ScannerObj = new Scanner(System.in);
 		//Get the GridSize from the User....
-		System.out.println("Enter your MazeGrid Size: ");
+		System.out.println(">>>> Enter your MazeGrid Size: ");
 		String GSize = ScannerObj.next();
 		try{
 			while(!MazeP2P.Val.isvalidGridSize(GSize)){
-				System.out.println("Please Enter a Valid GridSize....  ");
+				System.out.println(">>>> Please Enter a Valid GridSize....  ");
 				GSize = ScannerObj.next();
 			}
 			this.setGridSize(Integer.parseInt(GSize));
@@ -347,11 +347,11 @@ public class MazeBean implements Serializable {
 		}
 		
 		//Get the Treasure Count from the User....
-		System.out.println("Enter your No. of Treasures: ");
+		System.out.println(">>>> Enter your No. of Treasures: ");
 		String NoTreasures = ScannerObj.next();
 		try{
 			while(!MazeP2P.Val.isvalidTreasure(this.GridSize, NoTreasures)){
-				System.out.println("Please Enter a Valid No of Treasures....  ");
+				System.out.println(">>>> Please Enter a Valid No of Treasures....  ");
 				NoTreasures = ScannerObj.next();
 			}
 			this.setTreasure(Integer.parseInt(NoTreasures));
@@ -385,7 +385,7 @@ public class MazeBean implements Serializable {
 			if(!PlayerObj.isPrimary() && !PlayerObj.isSecondary()){
 				PlayerObj.setSecondary(true);
 				PlayerObj.Secondary=true;
-				System.out.println("["+PlayerObj.getPlayerName()+"] Became Secondary Server");
+				System.out.println(">>>> ["+PlayerObj.getPlayerName()+"] Became Secondary Server");
 				sec_Selected=true;
 				secondaryPortNum=PlayerObj.getPlayerPort();
 				MazeP2P.Beanobj.getPlayerList().put(PlayerObj.getPlayerID(), PlayerObj);
@@ -393,8 +393,8 @@ public class MazeBean implements Serializable {
 				try{
 					P2PRegistry =LocateRegistry.getRegistry("",secondaryPortNum);
 					MazeP2PInterface peerStub=(MazeP2PInterface) P2PRegistry.lookup("Peer2peer");
-					System.out.println("Before update"+secondaryPortNum);
-					System.out.println("After update sec port : "+ MazeP2P.Beanobj.getSecondaryPortNum());
+					//System.out.println("Before update"+secondaryPortNum);
+					//System.out.println("After update sec port : "+ MazeP2P.Beanobj.getSecondaryPortNum());
 					peerStub.UpdateMazeState(MazeP2P.Beanobj);
 					broadcastPort();
 					
@@ -405,7 +405,10 @@ public class MazeBean implements Serializable {
 				break;
 			}
 			
-		}if(!sec_Selected)System.out.println("One player is left so secondary player cannot be created");
+		}if(!sec_Selected){System.out.println(">>>> One player is left so secondary player cannot be created");
+		System.out.println(">>>> ALL PLAYERS LEFT GAME END");
+		System.exit(2);
+		}
 	}
 	
 	public void broadcastPort(){

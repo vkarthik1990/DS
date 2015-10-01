@@ -9,6 +9,7 @@ public class gameStatusThread implements Runnable{
 	boolean gameStatus=false;
 	boolean running=true;
 	MazeBean Beanobj;
+	boolean sec=true;
 	public gameStatusThread(PlayerInfo Playerobj,MazeGUI MazeGUIObj){
 		this.playerObj=Playerobj;
 		this.MazeGUIObj=MazeGUIObj;
@@ -25,6 +26,7 @@ public class gameStatusThread implements Runnable{
 				Beanobj=MazeP2P.P2PObj.getMazeStubsafe().getMazeBean(playerObj);
 				playerObj=MazeP2P.Beanobj.getPlayerList().get(playerObj.getPlayerID());
 				//System.out.println("GameStatus Thread runnning" +Beanobj.getTreasureCount());
+				if(sec)MazeGUIObj.DisplayMazeGridinBoard(Beanobj.getMazeGrid(),MazeGUIObj.JLabelMap,MazeGUIObj.Jframeobj);sec=false;
 				if(Beanobj.getTreasureCount()==0){
 					Beanobj.setGameover(true);
 					MazeP2P.Beanobj.setGameover(true);
@@ -32,10 +34,11 @@ public class gameStatusThread implements Runnable{
 					MazeGUIObj.DisplayMazeGridinBoard(Beanobj.getMazeGrid(),MazeGUIObj.JLabelMap,MazeGUIObj.Jframeobj);
 					if(playerObj.isPrimary()){
 					MazeP2P.Beanobj=MazeP2P.MazeStub.computeWinner();
-					System.out.println("***********************GAME OVER**************************");
+					System.out.println(" ***********************GAME OVER**************************");
 					}
 					MazeP2P.Beanobj=MazeP2P.P2PObj.getMazeStubsafe().getMazeBean(playerObj);
-					if(playerObj.isWinner()){ System.out.println("winner :  "+playerObj.getPlayerName());
+					playerObj=MazeP2P.Beanobj.getPlayerList().get(playerObj.getPlayerID());
+					if(playerObj.isWinner()){ System.out.println(">>>> Winner is :  "+playerObj.getPlayerName());
 						playerObj.setResponseFromServer("you win");
 						playerObj.getPlayerName();
 					}
